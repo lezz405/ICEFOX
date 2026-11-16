@@ -1,0 +1,2427 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICEFOX AI</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        /* ================= VARIABEL ================= */
+
+        :root {
+            --bg: #0b0f14;
+            --panel: #11161d;
+            --panel-2: #161d26;
+            --line: #222b36;
+            --text: #eef2f6;
+            --muted: #8a97a8;
+            --accent: #38bdf8;
+            --accent-soft: rgba(56, 189, 248, 0.12);
+            --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', Arial, sans-serif;
+        }
+
+        .app {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ================= LOGIN ================= */
+
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .login-screen.hidden { display: none; }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 28px 24px;
+            text-align: center;
+        }
+
+        .login-logo {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            object-fit: cover;
+            border: 1px solid var(--line);
+            margin-bottom: 12px;
+        }
+
+        .login-card h1 {
+            font-family: 'Sora', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: -0.5px;
+            margin: 6px 0;
+        }
+
+        .login-card h1 span { color: var(--accent); }
+
+        .login-card p {
+            color: var(--muted);
+            font-size: 13px;
+            margin: 0 0 18px;
+            line-height: 1.6;
+        }
+
+        .google-btn {
+            width: 100%;
+            padding: 13px;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: #111;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--muted);
+            font-size: 11px;
+            margin: 18px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--line);
+        }
+
+        .login-error {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 8px;
+            min-height: 16px;
+        }
+
+        .login-submit {
+            width: 100%;
+            padding: 13px;
+            border-radius: 12px;
+            border: none;
+            background: var(--accent);
+            color: #06121c;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 14px;
+        }
+
+        .login-note {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 285px;
+            min-width: 285px;
+            background: var(--panel);
+            border-right: 1px solid var(--line);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 16px;
+            transition: 0.28s;
+            z-index: 20;
+        }
+
+        .sidebar.hidden { margin-left: -285px; }
+
+        .brand {
+            font-family: 'Sora', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: -0.5px;
+            padding: 14px 10px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            text-align: center;
+            background: var(--panel-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .brand span { color: var(--accent); }
+
+        .brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-size: 9px;
+            letter-spacing: 3px;
+            color: var(--muted);
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            background: var(--panel-2);
+            color: var(--text);
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .new-chat {
+            background: var(--accent);
+            color: #06121c;
+            border-color: var(--accent);
+            margin-top: 16px;
+        }
+
+        .arcade-link {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--muted);
+            opacity: 0.6;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            padding: 6px;
+            transition: 0.2s;
+        }
+
+        .arcade-link:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+
+        .library-label {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin: 20px 0 10px;
+        }
+
+        .library {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 10px;
+            margin-bottom: 6px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #c3ccd6;
+            font-size: 13px;
+            border: 1px solid transparent;
+        }
+
+        .chat-item.active {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--text);
+        }
+
+        .chat-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .delete-chat {
+            border: none;
+            background: transparent;
+            color: #6b7a8c;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .profile-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+            padding: 10px;
+            background: var(--panel-2);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .profile-box:hover { border-color: var(--accent); }
+
+        .profile-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #06121c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info { flex: 1; min-width: 0; }
+
+        .profile-info b {
+            display: block;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-info span {
+            display: block;
+            font-size: 11px;
+            color: var(--muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-footer {
+            color: var(--muted);
+            font-size: 11px;
+            padding-top: 12px;
+            border-top: 1px solid var(--line);
+            text-align: center;
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .stat {
+            flex: 1;
+            background: var(--panel-2);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px 4px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .stat b {
+            display: block;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        /* ================= MAIN / HEADER ================= */
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            background: var(--panel);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-btn {
+            border: 1px solid var(--line);
+            background: var(--panel-2);
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .header-title {
+            font-family: 'Sora', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            line-height: 1.4;
+        }
+
+        .header-title span {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .icon-btn,
+        .share-btn,
+        .settings-btn {
+            border: 1px solid var(--line);
+            background: var(--panel-2);
+            color: var(--text);
+            height: 40px;
+            padding: 0 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .icon-btn {
+            width: 40px;
+            padding: 0;
+            font-size: 14px;
+            opacity: 0.6;
+            background: transparent;
+            border-color: transparent;
+        }
+
+        .icon-btn:hover { opacity: 1; }
+
+        .share-btn {
+            background: var(--accent);
+            color: #06121c;
+            border-color: var(--accent);
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid var(--line);
+        }
+
+        /* ================= CHAT ================= */
+
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 16px;
+        }
+
+        .chat-content {
+            max-width: 760px;
+            margin: auto;
+        }
+
+        .welcome {
+            margin: 48px auto 22px;
+            text-align: center;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 30px 18px;
+        }
+
+        .welcome h1 {
+            font-family: 'Sora', sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -0.8px;
+            line-height: 1.3;
+            margin: 0;
+        }
+
+        .welcome h1 span { color: var(--accent); }
+
+        .welcome p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .quick {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 18px;
+        }
+
+        .quick button {
+            background: var(--panel-2);
+            color: var(--text);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 9px 14px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .messages {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding-bottom: 20px;
+        }
+
+        .message {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .message.user { flex-direction: row-reverse; }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--panel-2);
+            border: 1px solid var(--line);
+            overflow: hidden;
+            font-size: 18px;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .message-body { flex: 1; max-width: 86%; }
+
+        .message.user .message-body {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .message-name {
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 7px;
+            color: var(--muted);
+        }
+
+        .message-text {
+            font-size: 15px;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .bot .message-text {
+            background: var(--panel);
+            padding: 13px 15px;
+            border-radius: 4px 16px 16px 16px;
+            border: 1px solid var(--line);
+        }
+
+        .user .message-text {
+            background: var(--accent);
+            color: #06121c;
+            padding: 13px 15px;
+            border-radius: 16px 4px 16px 16px;
+            font-weight: 600;
+        }
+
+        .chat-image {
+            max-width: 240px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            margin-bottom: 8px;
+        }
+
+        /* Animasi AI ngetik */
+        .typing-dots {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            padding: 4px 0;
+        }
+
+        .typing-dots span {
+            width: 7px;
+            height: 7px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: block;
+            animation: typing-bounce 1.2s infinite;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes typing-bounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-5px); opacity: 1; }
+        }
+
+        .typing-cursor::after {
+            content: "▍";
+            color: var(--accent);
+            animation: blink 0.7s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* ================= INPUT GELAP ================= */
+
+        .input-wrapper {
+            padding: 12px 14px 14px;
+            background: var(--panel);
+            border-top: 1px solid var(--line);
+        }
+
+        .input-container {
+            max-width: 760px;
+            margin: auto;
+        }
+
+        .input-box {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            background: var(--panel-2);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 10px;
+        }
+
+        .input-box:focus-within { border-color: var(--accent); }
+
+        #user-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            resize: none;
+            font-size: 15px;
+            background: transparent;
+            max-height: 140px;
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        #user-input::placeholder { color: var(--muted); }
+
+        .send-btn {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 11px;
+            background: var(--accent);
+            color: #06121c;
+            font-size: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .image-btn {
+            background: var(--panel) !important;
+            color: var(--text) !important;
+            border: 1px solid var(--line) !important;
+        }
+
+        .disclaimer {
+            text-align: center;
+            margin-top: 9px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        #image-preview {
+            display: none;
+            width: fit-content;
+            margin: 0 auto 10px;
+            position: relative;
+        }
+
+        #image-preview img {
+            max-width: 120px;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            display: block;
+        }
+
+        #image-preview button {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--text);
+            color: var(--bg);
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: none;
+            z-index: 10;
+        }
+
+        .overlay.show { display: block; }
+
+        /* ================= MODAL ================= */
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.72);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            padding: 14px;
+        }
+
+        .modal.show { display: flex; }
+
+        .game-card,
+        .settings-card,
+        .share-card {
+            width: 100%;
+            max-width: 540px;
+            max-height: 92vh;
+            overflow-y: auto;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .settings-card,
+        .share-card { max-width: 460px; }
+
+        .game-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .game-head h2 {
+            font-family: 'Sora', sans-serif;
+            font-size: 16px;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .game-head span {
+            font-size: 11px;
+            color: var(--muted);
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+
+        .close {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: var(--panel-2);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .field {
+            text-align: left;
+            margin: 10px 0;
+        }
+
+        .field label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .field input:focus { border-color: var(--accent); }
+
+        .profile-upload {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: var(--bg);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .profile-upload-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #06121c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 20px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .profile-upload-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-upload-btn {
+            border: 1px solid var(--line);
+            background: var(--panel-2);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .profile-upload small {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .color-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .color-opt {
+            flex: 1;
+            padding: 12px 6px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: var(--panel-2);
+            color: var(--text);
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .color-opt.active {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .danger-btn {
+            background: transparent !important;
+            color: #ff6b6b !important;
+            border-color: #5a2a2a !important;
+        }
+
+        .share-preview {
+            background: var(--bg);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 13px;
+            color: var(--muted);
+            max-height: 120px;
+            overflow-y: auto;
+            margin: 12px 0;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--text);
+            color: var(--bg);
+            padding: 12px 18px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 13px;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.25s;
+            z-index: 300;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ================= GAME ================= */
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin: 14px 0;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px 6px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            cursor: pointer;
+            background: var(--panel-2);
+            color: var(--text);
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .tab.active {
+            background: var(--accent);
+            color: #06121c;
+            border-color: var(--accent);
+        }
+
+        .game-box {
+            background: var(--bg);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 14px;
+            text-align: center;
+            min-height: 280px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score {
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin: 10px 0;
+        }
+
+        .small {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .ttt-wrap {
+            position: relative;
+            max-width: 300px;
+            margin: 12px auto;
+        }
+
+        .ttt {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .ttt button {
+            aspect-ratio: 1;
+            background: var(--white);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            font-size: 30px;
+            font-weight: 800;
+            cursor: pointer;
+            color: #11161d;
+        }
+
+        .ttt button.win-cell { background: var(--accent); }
+
+        #win-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        #win-line line {
+            stroke: var(--accent);
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            transition: stroke-dashoffset 0.55s ease;
+        }
+
+        #win-line.show line { stroke-dashoffset: 0; }
+
+        canvas {
+            width: 100%;
+            max-width: 440px;
+            background: var(--bg);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+        }
+
+        input.num {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 18px;
+            text-align: center;
+            outline: none;
+            margin: 10px 0;
+        }
+
+        .victory {
+            position: absolute;
+            inset: 0;
+            background: rgba(11, 15, 20, 0.92);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            padding: 16px;
+        }
+
+        .victory.show { display: flex; }
+
+        .victory h3 {
+            font-size: 20px;
+            letter-spacing: 2px;
+            margin: 12px 0 6px;
+        }
+
+        .victory p {
+            color: var(--muted);
+            margin: 0 0 16px;
+            text-align: center;
+        }
+
+        .victory .big { font-size: 44px; }
+
+        /* ================= HP ================= */
+
+        @media (max-width: 760px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                transform: translateX(-100%);
+                margin-left: 0;
+            }
+
+            .sidebar.open { transform: translateX(0); }
+
+            .sidebar.hidden {
+                margin-left: 0;
+                transform: translateX(-100%);
+            }
+
+            .share-btn span { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== LOGIN ===== -->
+    <div class="login-screen" id="login-screen">
+        <div class="login-card">
+
+            <img src="logo.png" class="login-logo" onerror="this.style.display='none'">
+
+            <h1>ICEFOX <span>AI</span></h1>
+
+            <p>
+                Selamat datang kembali!<br>
+                Login dulu bro buat lanjut chat.
+            </p>
+
+            <button class="google-btn" onclick="loginWithGoogle()">
+                <span style="font-size:18px">G</span>
+                Lanjutkan dengan Google
+            </button>
+
+            <div class="divider">ATAU DENGAN EMAIL</div>
+
+            <div class="field">
+                <label>NAMA KAMU</label>
+                <input id="login-name" placeholder="Contoh: Farel">
+            </div>
+
+            <div class="field">
+                <label>EMAIL</label>
+                <input id="login-email" type="email" placeholder="kamu@email.com">
+            </div>
+
+            <div class="field">
+                <label>PASSWORD</label>
+                <input id="login-password" type="password" placeholder="Minimal 4 karakter">
+            </div>
+
+            <div class="login-error" id="login-error"></div>
+
+            <button class="login-submit" onclick="loginWithEmail()">Masuk →</button>
+
+            <div class="login-note">
+                Kalo email baru, otomatis dibikinin akun baru.<br>
+                Data tersimpan aman di browser kamu.
+            </div>
+
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleSidebar(true)"></div>
+    <div class="toast" id="toast">Tersalin!</div>
+
+    <div class="app">
+
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar" id="sidebar">
+
+            <div class="brand">
+                <div>
+                    ICEFOX <span>AI</span>
+                    <small>ARCADE EDITION</small>
+                </div>
+            </div>
+
+            <button class="btn new-chat" onclick="newChat()">＋ New Chat</button>
+            <div class="arcade-link" onclick="openGames()">✦ Arcade</div>
+
+            <div class="stats">
+                <div class="stat"><b id="stat-chat">0</b>CHAT</div>
+                <div class="stat"><b id="stat-win">0</b>MENANG</div>
+            </div>
+
+            <div class="library-label">YOUR LIBRARY</div>
+            <div class="library" id="library"></div>
+
+            <div class="profile-box" onclick="openSettings()">
+                <div class="profile-avatar" id="profile-avatar">B</div>
+                <div class="profile-info">
+                    <b id="profile-name">Bro</b>
+                    <span id="profile-email">bro@email.com • Klik untuk setting</span>
+                </div>
+                <span>⚙️</span>
+            </div>
+
+            <div class="sidebar-footer">
+                ICEFOX AI • Simple & Elegant<br>
+                <small>© 2026 ICEFOX AI</small>
+            </div>
+
+        </aside>
+
+        <!-- ===== MAIN ===== -->
+        <main class="main">
+
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                    <div class="header-title">
+                        ICEFOX AI
+                        <span><br>Ready Player 1</span>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <button class="share-btn" onclick="openShare()">↗ <span>Share</span></button>
+                    <button class="settings-btn" onclick="openSettings()">⚙️</button>
+                    <button class="icon-btn" title="Arcade" onclick="openGames()">✦</button>
+                    <img src="logo.png" class="logo" onerror="this.style.display='none'">
+                </div>
+            </header>
+
+            <section class="chat-area" id="chat-area">
+                <div class="chat-content">
+
+                    <div class="welcome" id="welcome">
+                        <h1>
+                            Selamat Datang<br>
+                            <span id="welcome-name">BRO!</span>
+                        </h1>
+                        <p>Tanya apa aja, kirim foto, atau main game.</p>
+
+                        <div class="quick">
+                            <button onclick="openGames()">Arcade</button>
+                            <button onclick="quickAsk('buatin jadwal belajar yang enak dong')">Jadwal Belajar</button>
+                            <button onclick="quickAsk('cuaca di Jakarta gimana bro?')">Cuaca Jakarta</button>
+                        </div>
+                    </div>
+
+                    <div class="messages" id="messages"></div>
+
+                </div>
+            </section>
+
+            <div class="input-wrapper">
+                <div class="input-container">
+
+                    <div id="image-preview">
+                        <img id="preview-img">
+                        <button onclick="removeImage()">×</button>
+                    </div>
+
+                    <div class="input-box">
+                        <input type="file" id="image-input" accept="image/*" hidden>
+
+                        <button
+                            class="send-btn image-btn"
+                            onclick="document.getElementById('image-input').click()"
+                        >+</button>
+
+                        <textarea
+                            id="user-input"
+                            rows="1"
+                            placeholder="Message ICEFOX AI..."
+                        ></textarea>
+
+                        <button class="send-btn" id="send-btn" onclick="sendMessage()">↑</button>
+                    </div>
+
+                    <div class="disclaimer">
+                        ICEFOX AI bisa saja salah. Ketik "cuaca di Jakarta" untuk cek cuaca.
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ===== SETTINGS ===== -->
+    <div class="modal" id="settings-modal">
+        <div class="settings-card">
+
+            <div class="game-head">
+                <h2>Settings<br><span>Atur profil & preferensi kamu</span></h2>
+                <button class="close" onclick="closeSettings()">×</button>
+            </div>
+
+            <div class="field">
+                <label>FOTO PROFIL</label>
+
+                <div class="profile-upload">
+                    <div class="profile-upload-avatar" id="setting-avatar">B</div>
+
+                    <div>
+                        <input
+                            type="file"
+                            id="setting-avatar-input"
+                            accept="image/*"
+                            hidden
+                            onchange="uploadProfilePhoto(event)"
+                        >
+
+                        <button
+                            class="profile-upload-btn"
+                            onclick="document.getElementById('setting-avatar-input').click()"
+                        >
+                            Ganti Foto
+                        </button>
+
+                        <button
+                            class="profile-upload-btn"
+                            onclick="removeProfilePhoto()"
+                        >
+                            Hapus
+                        </button>
+
+                        <small>Foto akan muncul di sidebar & chat kamu</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>NAMA KAMU</label>
+                <input id="setting-name" placeholder="Contoh: Farel">
+            </div>
+
+            <div class="field">
+                <label>EMAIL</label>
+                <input id="setting-email" type="email" placeholder="kamu@email.com">
+            </div>
+
+            <div class="field">
+                <label>KOTA DEFAULT UNTUK CUACA</label>
+                <select id="setting-city">
+                    <option value="Jakarta">Jakarta</option>
+                    <option value="Bogor">Bogor</option>
+                    <option value="Depok">Depok</option>
+                    <option value="Tangerang">Tangerang</option>
+                    <option value="Bekasi">Bekasi</option>
+                    <option value="Bandung">Bandung</option>
+                    <option value="Surabaya">Surabaya</option>
+                    <option value="Pulogebang">Pulogebang</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>WARNA AKSEN (TETAP 1 WARNA)</label>
+
+                <div class="color-row">
+                    <button class="color-opt active" data-color="#38bdf8" onclick="pickColor(this, '#38bdf8')">Biru Es</button>
+                    <button class="color-opt" data-color="#ffffff" onclick="pickColor(this, '#ffffff')">Putih</button>
+                    <button class="color-opt" data-color="#a3e635" onclick="pickColor(this, '#a3e635')">Hijau Lime</button>
+                </div>
+            </div>
+
+            <button class="btn" style="background:var(--accent);color:#06121c;margin-top:6px" onclick="saveSettings()">
+                Simpan Settings
+            </button>
+
+            <button class="btn danger-btn" style="margin-top:8px" onclick="clearAllChats()">
+                Hapus Semua Chat
+            </button>
+
+            <button class="btn danger-btn" style="margin-top:8px" onclick="logout()">
+                Logout
+            </button>
+
+            <p class="small" style="text-align:center;margin-top:10px">
+                Settings tersimpan otomatis di browser kamu.
+            </p>
+
+        </div>
+    </div>
+
+    <!-- ===== SHARE ===== -->
+    <div class="modal" id="share-modal">
+        <div class="share-card">
+
+            <div class="game-head">
+                <h2>Share Chat<br><span>Bagikan chat ini ke teman kamu</span></h2>
+                <button class="close" onclick="closeShare()">×</button>
+            </div>
+
+            <div class="share-preview" id="share-preview">Belum ada chat...</div>
+
+            <button class="btn" style="background:var(--accent);color:#06121c" onclick="copyShareText()">
+                📋 Copy Teks Chat
+            </button>
+
+            <button class="btn" style="margin-top:8px" onclick="shareWhatsApp()">
+                💬 Share ke WhatsApp
+            </button>
+
+            <button class="btn" style="margin-top:8px" onclick="copyShareLink()">
+                🔗 Copy Link
+            </button>
+
+        </div>
+    </div>
+
+    <!-- ===== GAME ===== -->
+    <div class="modal" id="game-modal">
+        <div class="game-card">
+
+            <div class="game-head">
+                <h2>Minigame Arcade<br><span>Pilih game kamu</span></h2>
+                <button class="close" onclick="closeGames()">×</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showGame('ttt', this)">Tic Tac Toe</button>
+                <button class="tab" onclick="showGame('pong', this)">Ping Pong</button>
+                <button class="tab" onclick="showGame('dino', this)">Dino</button>
+                <button class="tab" onclick="showGame('tebak', this)">Tebak Angka</button>
+            </div>
+
+            <div id="game-ttt" class="game-box">
+                <div class="score" id="ttt-score">KAMU: 0 | ICEFOX: 0 | SERI: 0</div>
+                <div class="small" id="ttt-status">Giliran kamu! Kamu ❌, ICEFOX ⭕</div>
+
+                <div class="ttt-wrap">
+                    <div class="ttt" id="ttt-board"></div>
+                    <svg id="win-line" viewBox="0 0 300 300" preserveAspectRatio="none">
+                        <line id="win-line-el" x1="0" y1="0" x2="0" y2="0" />
+                    </svg>
+                </div>
+
+                <div class="victory" id="victory-ttt">
+                    <div class="big">🏆</div>
+                    <h3>VICTORY</h3>
+                    <p id="victory-ttt-text">Kamu menang!</p>
+                    <button class="btn" style="background:var(--accent);color:#06121c;max-width:220px" onclick="hideVictory('ttt');resetTTT()">Main Lagi</button>
+                </div>
+
+                <button class="btn" style="margin-top:10px" onclick="resetTTT()">Reset</button>
+            </div>
+
+            <div id="game-pong" class="game-box" style="display:none">
+                <div class="score" id="pong-score">KAMU 0 : 0 ICEFOX</div>
+                <canvas id="pong" width="440" height="280"></canvas>
+                <p class="small">Gerakkan mouse / jari kamu untuk menggerakkan paddle bawah. Duluan 5 menang!</p>
+                <button class="btn" style="background:var(--accent);color:#06121c" onclick="startPong()">Mulai Pong</button>
+
+                <div class="victory" id="victory-pong">
+                    <div class="big">🏆</div>
+                    <h3>VICTORY</h3>
+                    <p id="victory-pong-text">Kamu menang Pong!</p>
+                    <button class="btn" style="background:var(--accent);color:#06121c;max-width:220px" onclick="hideVictory('pong')">Main Lagi</button>
+                </div>
+            </div>
+
+            <div id="game-dino" class="game-box" style="display:none">
+                <div class="score" id="dino-score">SCORE: 0 • HIGH: <span id="dino-high">0</span></div>
+                <canvas id="dino" width="440" height="180"></canvas>
+                <p class="small">Tekan <b>SPASI / TAP LAYAR</b> untuk loncat. Skor 500 = VICTORY!</p>
+                <button class="btn" style="background:var(--accent);color:#06121c" onclick="startDino()">Mulai Lompat</button>
+
+                <div class="victory" id="victory-dino">
+                    <div class="big">🏆</div>
+                    <h3>VICTORY</h3>
+                    <p id="victory-dino-text">Kamu sampai 500!</p>
+                    <button class="btn" style="background:var(--accent);color:#06121c;max-width:220px" onclick="hideVictory('dino');startDino()">Main Lagi</button>
+                </div>
+
+                <div class="victory" id="gameover-dino">
+                    <div class="big">💥</div>
+                    <h3>GAME OVER</h3>
+                    <p id="gameover-dino-text">Menabrak kaktus!</p>
+                    <button class="btn" style="max-width:220px" onclick="hideVictory('gameover-dino');startDino()">Coba Lagi</button>
+                </div>
+            </div>
+
+            <div id="game-tebak" class="game-box" style="display:none">
+                <div class="score">TEBAK ANGKA 1 - 100</div>
+                <p class="small" id="tebak-status">Saya sudah memikirkan angka, coba tebak! Sisa nyawa: 7</p>
+                <input class="num" id="tebak-input" type="number" placeholder="Masukkan angka...">
+                <button class="btn" style="background:var(--accent);color:#06121c" onclick="checkTebak()">Tebak</button>
+                <button class="btn" style="margin-top:8px" onclick="resetTebak()">Angka Baru</button>
+
+                <div class="victory" id="victory-tebak">
+                    <div class="big">🏆</div>
+                    <h3>VICTORY</h3>
+                    <p id="victory-tebak-text">Kamu benar!</p>
+                    <button class="btn" style="background:var(--accent);color:#06121c;max-width:220px" onclick="hideVictory('tebak');resetTebak()">Main Lagi</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+
+        /* =====================================================
+           LOGIN
+        ===================================================== */
+
+        let currentUser = null;
+
+        try {
+            currentUser = JSON.parse(localStorage.getItem("icefox_user") || "null");
+        } catch {}
+
+        function checkLogin() {
+            const screen = document.getElementById("login-screen");
+
+            if (currentUser) {
+                screen.classList.add("hidden");
+                settings.name = currentUser.name;
+                settings.email = currentUser.email;
+                if (currentUser.avatar) settings.avatar = currentUser.avatar;
+            } else {
+                screen.classList.remove("hidden");
+            }
+
+            applySettings();
+        }
+
+        function showLoginError(msg) {
+            document.getElementById("login-error").textContent = msg;
+        }
+
+        function doLogin(name, email, password) {
+            currentUser = {
+                name,
+                email,
+                password,
+                avatar: settings.avatar || "",
+                loginAt: Date.now()
+            };
+
+            localStorage.setItem("icefox_user", JSON.stringify(currentUser));
+
+            let users = {};
+            try {
+                users = JSON.parse(localStorage.getItem("icefox_users") || "{}");
+            } catch {}
+
+            users[email] = currentUser;
+            localStorage.setItem("icefox_users", JSON.stringify(users));
+
+            checkLogin();
+            showToast("Selamat datang, " + name + "!");
+            renderChat();
+        }
+
+        function loginWithEmail() {
+            const name = document.getElementById("login-name").value.trim();
+            const email = document.getElementById("login-email").value.trim().toLowerCase();
+            const pass = document.getElementById("login-password").value.trim();
+
+            if (!name) return showLoginError("Isi nama kamu dulu bro!");
+            if (!email || !email.includes("@")) return showLoginError("Email-nya belum bener nih!");
+            if (pass.length < 4) return showLoginError("Password minimal 4 karakter ya!");
+
+            let users = {};
+            try {
+                users = JSON.parse(localStorage.getItem("icefox_users") || "{}");
+            } catch {}
+
+            if (users[email] && users[email].password !== pass) {
+                return showLoginError("Password salah! Coba lagi.");
+            }
+
+            const finalName = users[email] ? users[email].name : name;
+            doLogin(finalName, email, pass);
+        }
+
+        function loginWithGoogle() {
+            const name = prompt("Demo Google Login\nMasukkan nama Google kamu:", "Farel") || "Google User";
+            const email = name.toLowerCase().replace(/\s/g, "") + "@gmail.com";
+            doLogin(name, email, "google-login");
+            showToast("Login dengan Google berhasil!");
+        }
+
+        function logout() {
+            if (!confirm("Yakin mau logout?")) return;
+
+            localStorage.removeItem("icefox_user");
+            currentUser = null;
+
+            closeSettings();
+            checkLogin();
+            showToast("Kamu sudah logout!");
+        }
+
+        /* =====================================================
+           SETTINGS & PROFIL + FOTO - DEFAULT JAKARTA
+        ===================================================== */
+
+        let settings = {
+            name: "Bro",
+            email: "bro@email.com",
+            city: "Jakarta",
+            color: "#38bdf8",
+            avatar: ""
+        };
+
+        try {
+            const saved = JSON.parse(localStorage.getItem("icefox_settings") || "null");
+            if (saved) settings = { ...settings, ...saved };
+            // Kalo masih ke-set Pulogebang dari versi lama, pindahin ke Jakarta
+            if (settings.city === "Pulogebang") settings.city = "Jakarta";
+        } catch {}
+
+        function getAvatarHTML() {
+            if (settings.avatar) return `<img src="${settings.avatar}">`;
+            return (settings.name || "B").charAt(0).toUpperCase();
+        }
+
+        function applySettings() {
+            document.getElementById("profile-name").textContent = settings.name;
+            document.getElementById("profile-email").textContent = settings.email + " • Klik untuk setting";
+            document.getElementById("profile-avatar").innerHTML = getAvatarHTML();
+            document.getElementById("welcome-name").textContent = settings.name.toUpperCase() + "!";
+
+            document.getElementById("setting-name").value = settings.name;
+            document.getElementById("setting-email").value = settings.email;
+            document.getElementById("setting-city").value = settings.city;
+            document.getElementById("setting-avatar").innerHTML = getAvatarHTML();
+
+            document.documentElement.style.setProperty("--accent", settings.color);
+            document.documentElement.style.setProperty("--accent-soft", settings.color + "22");
+
+            document.querySelectorAll(".color-opt").forEach(b => {
+                b.classList.toggle("active", b.dataset.color === settings.color);
+            });
+
+            localStorage.setItem("icefox_settings", JSON.stringify(settings));
+            localStorage.setItem("icefox_kota", settings.city);
+
+            if (currentUser) {
+                currentUser.name = settings.name;
+                currentUser.email = settings.email;
+                currentUser.avatar = settings.avatar;
+                localStorage.setItem("icefox_user", JSON.stringify(currentUser));
+            }
+        }
+
+        function uploadProfilePhoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = e => {
+                settings.avatar = e.target.result;
+                applySettings();
+                showToast("Foto profil diganti!");
+                renderChat();
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function removeProfilePhoto() {
+            settings.avatar = "";
+            applySettings();
+            showToast("Foto profil dihapus");
+            renderChat();
+        }
+
+        function openSettings() {
+            document.getElementById("settings-modal").classList.add("show");
+        }
+
+        function closeSettings() {
+            document.getElementById("settings-modal").classList.remove("show");
+        }
+
+        function pickColor(btn, color) {
+            document.querySelectorAll(".color-opt").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            settings.color = color;
+            applySettings();
+        }
+
+        function saveSettings() {
+            settings.name = document.getElementById("setting-name").value.trim() || "Bro";
+            settings.email = document.getElementById("setting-email").value.trim() || "bro@email.com";
+            settings.city = document.getElementById("setting-city").value;
+
+            applySettings();
+            showToast("Settings tersimpan!");
+            closeSettings();
+            renderChat();
+        }
+
+        function clearAllChats() {
+            if (!confirm("Hapus semua chat?")) return;
+
+            chats = [];
+            save();
+            createChat();
+
+            showToast("Semua chat dihapus");
+            closeSettings();
+        }
+
+        /* =====================================================
+           SHARE
+        ===================================================== */
+
+        function getShareText() {
+            const chat = getChat();
+            if (!chat || !chat.messages.length) return "Belum ada chat...";
+
+            let txt = `Chat ICEFOX AI - ${chat.title}\n`;
+            txt += `Dari: ${settings.name} (${settings.email})\n\n`;
+
+            chat.messages.forEach(m => {
+                const who = m.role === "user" ? settings.name : "ICEFOX AI";
+                txt += `${who}: ${m.content}\n\n`;
+            });
+
+            return txt;
+        }
+
+        function openShare() {
+            document.getElementById("share-preview").textContent = getShareText().slice(0, 600);
+            document.getElementById("share-modal").classList.add("show");
+        }
+
+        function closeShare() {
+            document.getElementById("share-modal").classList.remove("show");
+        }
+
+        async function copyShareText() {
+            try {
+                await navigator.clipboard.writeText(getShareText());
+                showToast("Teks chat tersalin!");
+            } catch {
+                showToast("Gagal menyalin");
+            }
+        }
+
+        function shareWhatsApp() {
+            window.open(`https://wa.me/?text=${encodeURIComponent(getShareText())}`, "_blank");
+        }
+
+        async function copyShareLink() {
+            const link = location.href + "#chat-" + (getChat()?.id || "");
+
+            try {
+                await navigator.clipboard.writeText(link);
+                showToast("Link tersalin!");
+            } catch {
+                showToast(link);
+            }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            t.textContent = msg;
+            t.classList.add("show");
+            setTimeout(() => t.classList.remove("show"), 2200);
+        }
+
+        /* =====================================================
+           CHAT DATA
+        ===================================================== */
+
+        const KEY = "frost_ai_library_v2";
+
+        let chats = [];
+        let currentChatId = null;
+        let loading = false;
+        let selectedImage = null;
+        let winCount = 0;
+
+        const save = () => localStorage.setItem(KEY, JSON.stringify(chats));
+        const getChat = () => chats.find(c => c.id === currentChatId);
+
+        function createChat() {
+            const chat = {
+                id: Date.now().toString(),
+                title: "New Conversation",
+                messages: []
+            };
+
+            chats.unshift(chat);
+            currentChatId = chat.id;
+
+            save();
+            renderLibrary();
+            renderChat();
+
+            return chat;
+        }
+
+        function newChat() {
+            if (!loading) createChat();
+        }
+
+        function switchChat(id) {
+            if (loading) return;
+
+            currentChatId = id;
+            renderLibrary();
+            renderChat();
+
+            if (window.innerWidth < 760) toggleSidebar(true);
+        }
+
+        function deleteChat(id, e) {
+            e.stopPropagation();
+            if (loading) return;
+
+            chats = chats.filter(c => c.id !== id);
+
+            if (currentChatId === id) {
+                currentChatId = chats[0]?.id || null;
+            }
+
+            if (!currentChatId) createChat();
+
+            save();
+            renderLibrary();
+            renderChat();
+        }
+
+        function renderLibrary() {
+            document.getElementById("library").innerHTML = chats.map(c => `
+                <div class="chat-item ${c.id === currentChatId ? 'active' : ''}" onclick="switchChat('${c.id}')">
+                    <span>▤</span>
+                    <span class="chat-name">${c.title}</span>
+                    <button class="delete-chat" onclick="deleteChat('${c.id}', event)">×</button>
+                </div>
+            `).join("");
+
+            document.getElementById("stat-chat").textContent = chats.length;
+            document.getElementById("stat-win").textContent = winCount;
+        }
+
+        function renderChat() {
+            const chat = getChat();
+            const box = document.getElementById("messages");
+
+            box.innerHTML = "";
+            if (!chat) return;
+
+            document.getElementById("welcome").style.display = chat.messages.length ? "none" : "block";
+
+            chat.messages.forEach(m => {
+                displayMessage(m.role, m.content, m.image);
+            });
+
+            scrollBottom();
+        }
+
+        function formatMessage(t) {
+            return t
+                .replace(/&/g, "&")
+                .replace(/</g, "<")
+                .replace(/>/g, ">")
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/\*(.*?)\*/g, '<i>$1</i>');
+        }
+
+        // FIX BUG: message-text selalu dibikin, walau content kosong
+        // Biar titik-titik loading bisa nempel
+        function displayMessage(role, content, imageSrc) {
+            const box = document.getElementById("messages");
+            const div = document.createElement("div");
+
+            div.className = "message " + (role === "user" ? "user" : "bot");
+
+            const avatarHTML = role === "user"
+                ? getAvatarHTML()
+                : `<img src="logo.png" onerror="this.parentElement.textContent='🦊'">`;
+
+            const nameLabel = role === "user" ? settings.name : "ICEFOX AI";
+
+            div.innerHTML = `
+                <div class="avatar">${avatarHTML}</div>
+                <div class="message-body">
+                    <div class="message-name">${nameLabel}</div>
+                    ${imageSrc ? `<img class="chat-image" src="${imageSrc}">` : ""}
+                    <div class="message-text">${content ? formatMessage(content) : ""}</div>
+                </div>
+            `;
+
+            box.appendChild(div);
+            return div;
+        }
+
+        const scrollBottom = () => {
+            const area = document.getElementById("chat-area");
+            area.scrollTop = area.scrollHeight;
+        };
+
+        function toggleSidebar(forceClose) {
+            const sb = document.getElementById("sidebar");
+            const ov = document.getElementById("overlay");
+
+            if (window.innerWidth <= 760) {
+                if (forceClose) {
+                    sb.classList.remove("open");
+                    ov.classList.remove("show");
+                } else {
+                    sb.classList.toggle("open");
+                    ov.classList.toggle("show", sb.classList.contains("open"));
+                }
+            } else {
+                sb.classList.toggle("hidden");
+            }
+        }
+
+        function quickAsk(txt) {
+            document.getElementById("user-input").value = txt;
+            sendMessage();
+        }
+
+        /* =====================================================
+           IMAGE
+        ===================================================== */
+
+        document.getElementById("image-input").addEventListener("change", function () {
+            const f = this.files[0];
+            if (!f) return;
+
+            const r = new FileReader();
+
+            r.onload = e => {
+                selectedImage = e.target.result;
+                document.getElementById("preview-img").src = selectedImage;
+                document.getElementById("image-preview").style.display = "block";
+            };
+
+            r.readAsDataURL(f);
+        });
+
+        function removeImage() {
+            selectedImage = null;
+            document.getElementById("image-input").value = "";
+            document.getElementById("image-preview").style.display = "none";
+        }
+
+        /* =====================================================
+           ANIMASI NGETIK - VERSI FIX, GAK ERROR LAGI
+        ===================================================== */
+
+        async function typeWriterEffect(element, fullText) {
+            if (!element) return;
+
+            element.classList.add("typing-cursor");
+
+            // Ngetik polos dulu pakai textContent, biar tag ** gak kepotong
+            for (let i = 0; i <= fullText.length; i++) {
+                element.textContent = fullText.slice(0, i);
+
+                let delay = 8;
+                if (fullText[i] === "." || fullText[i] === "\n") delay = 120;
+                if (fullText[i] === " ") delay = 15;
+
+                await new Promise(r => setTimeout(r, delay));
+                scrollBottom();
+            }
+
+            // Setelah selesai, baru di-format jadi bold / italic
+            element.innerHTML = formatMessage(fullText);
+            element.classList.remove("typing-cursor");
+        }
+
+        /* =====================================================
+           KIRIM PESAN
+        ===================================================== */
+
+        async function sendMessage() {
+            const input = document.getElementById("user-input");
+            const btn = document.getElementById("send-btn");
+            const text = input.value.trim();
+
+            if ((!text && !selectedImage) || loading) return;
+
+            if (!currentUser) {
+                checkLogin();
+                showToast("Login dulu bro!");
+                return;
+            }
+
+            let chat = getChat() || createChat();
+
+            loading = true;
+            input.value = "";
+            input.style.height = "auto";
+            btn.disabled = true;
+
+            const imageToSend = selectedImage;
+            const displayText = text || "Tolong jelasin foto ini bro";
+
+            chat.messages.push({
+                role: "user",
+                content: displayText,
+                image: imageToSend
+            });
+
+            if (chat.messages.length === 1) {
+                chat.title = displayText.slice(0, 35);
+            }
+
+            save();
+            renderLibrary();
+
+            document.getElementById("welcome").style.display = "none";
+            displayMessage("user", displayText, imageToSend);
+            removeImage();
+
+            // Tampilin titik-titik lompat dulu - sekarang pasti muncul karena message-text selalu ada
+            const loadMsg = displayMessage("assistant", "");
+            const loadTextEl = loadMsg.querySelector(".message-text");
+            loadTextEl.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
+            scrollBottom();
+
+            try {
+                const res = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        messages: chat.messages.map(m => ({
+                            role: m.role,
+                            content: m.content
+                        })),
+                        image: imageToSend,
+                        city: settings.city
+                    })
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                // Hapus titik-titik, ganti jadi efek ngetik
+                await typeWriterEffect(loadTextEl, data.reply);
+
+                chat.messages.push({
+                    role: "assistant",
+                    content: data.reply
+                });
+
+                save();
+
+            } catch (e) {
+                loadTextEl.textContent = "Error: " + e.message;
+                loadTextEl.classList.remove("typing-cursor");
+            } finally {
+                loading = false;
+                btn.disabled = false;
+                renderLibrary();
+                scrollBottom();
+                input.focus();
+            }
+        }
+
+        const userInput = document.getElementById("user-input");
+
+        userInput.addEventListener("input", function () {
+            this.style.height = "auto";
+            this.style.height = Math.min(this.scrollHeight, 140) + "px";
+        });
+
+        userInput.addEventListener("keydown", e => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        document.getElementById("login-password").addEventListener("keydown", e => {
+            if (e.key === "Enter") loginWithEmail();
+        });
+
+        /* =====================================================
+           INIT
+        ===================================================== */
+
+        try {
+            chats = JSON.parse(localStorage.getItem(KEY) || "[]");
+        } catch {
+            chats = [];
+        }
+
+        if (!chats.length) {
+            createChat();
+        } else {
+            currentChatId = chats[0].id;
+            renderLibrary();
+            renderChat();
+        }
+
+        checkLogin();
+
+        /* =====================================================
+           GAMES
+        ===================================================== */
+
+        function showVictory(id, text) {
+            let el = document.getElementById("victory-" + id);
+            if (text) document.getElementById("victory-" + id + "-text").textContent = text;
+            el.classList.add("show");
+        }
+
+        function hideVictory(id) {
+            let el = document.getElementById("victory-" + id);
+            if (el) el.classList.remove("show");
+            if (id === "gameover-dino") document.getElementById("gameover-dino").classList.remove("show");
+        }
+
+        function openGames() {
+            document.getElementById("game-modal").classList.add("show");
+            initTTT();
+        }
+
+        function closeGames() {
+            document.getElementById("game-modal").classList.remove("show");
+            stopPong();
+            stopDino();
+        }
+
+        function showGame(id, el) {
+            document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+            el.classList.add("active");
+
+            ["ttt", "pong", "dino", "tebak"].forEach(g => {
+                document.getElementById("game-" + g).style.display = g === id ? "block" : "none";
+            });
+
+            if (id === "ttt") initTTT();
+            if (id === "pong") drawPongIdle();
+            if (id === "dino") drawDinoIdle();
+        }
+
+        let tttBoard = ["", "", "", "", "", "", "", "", ""];
+        let tttOver = false;
+        let tttScore = { me: 0, bot: 0, draw: 0 };
+
+        const WIN_LINES = {
+            "0,1,2": [15, 50, 285, 50],
+            "3,4,5": [15, 150, 285, 150],
+            "6,7,8": [15, 250, 285, 250],
+            "0,3,6": [50, 15, 50, 285],
+            "1,4,7": [150, 15, 150, 285],
+            "2,5,8": [250, 15, 250, 285],
+            "0,4,8": [20, 20, 280, 280],
+            "2,4,6": [280, 20, 20, 280]
+        };
+
+        function initTTT() {
+            if (document.getElementById("ttt-board").children.length) return;
+            const b = document.getElementById("ttt-board");
+            for (let i = 0; i < 9; i++) {
+                const btn = document.createElement("button");
+                btn.onclick = () => playTTT(i);
+                b.appendChild(btn);
+            }
+            updateTTT();
+        }
+
+        function playTTT(i) {
+            if (tttBoard[i] || tttOver) return;
+            tttBoard[i] = "❌";
+            document.getElementById("ttt-board").children[i].textContent = "❌";
+            let w = findWin("❌");
+            if (w) {
+                tttScore.me++; winCount++;
+                drawWinLine(w); highlightWin(w); finishTTT("Kamu menang!");
+                setTimeout(() => showVictory("ttt", "Kamu menang 3x3! Keren!"), 650);
+            } else if (tttBoard.every(x => x)) {
+                tttScore.draw++; finishTTT("Seri!");
+            } else {
+                let empty = tttBoard.map((v, idx) => v === "" ? idx : null).filter(v => v !== null);
+                let r = empty[Math.floor(Math.random() * empty.length)];
+                tttBoard[r] = "⭕";
+                document.getElementById("ttt-board").children[r].textContent = "⭕";
+                let w2 = findWin("⭕");
+                if (w2) { tttScore.bot++; drawWinLine(w2); highlightWin(w2); finishTTT("ICEFOX menang! Coba lagi!"); }
+                else if (tttBoard.every(x => x)) { tttScore.draw++; finishTTT("Seri!"); }
+                else document.getElementById("ttt-status").textContent = "Giliran kamu!";
+            }
+            updateTTT();
+        }
+
+        function findWin(p) {
+            const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for (let c of w) if (c.every(i => tttBoard[i] === p)) return c;
+            return null;
+        }
+
+        function drawWinLine(combo) {
+            let coords = WIN_LINES[combo.join(",")];
+            if (!coords) return;
+            let line = document.getElementById("win-line-el");
+            line.setAttribute("x1", coords[0]); line.setAttribute("y1", coords[1]);
+            line.setAttribute("x2", coords[0]); line.setAttribute("y2", coords[1]);
+            document.getElementById("win-line").classList.remove("show");
+            requestAnimationFrame(() => setTimeout(() => {
+                line.setAttribute("x2", coords[2]); line.setAttribute("y2", coords[3]);
+                document.getElementById("win-line").classList.add("show");
+            }, 30));
+        }
+
+        function highlightWin(combo) {
+            combo.forEach(i => document.getElementById("ttt-board").children[i].classList.add("win-cell"));
+        }
+
+        function finishTTT(msg) {
+            tttOver = true;
+            document.getElementById("ttt-status").textContent = msg;
+            renderLibrary();
+        }
+
+        function resetTTT() {
+            tttBoard = ["", "", "", "", "", "", "", "", ""];
+            tttOver = false;
+            [...document.getElementById("ttt-board").children].forEach(b => {
+                b.textContent = "";
+                b.classList.remove("win-cell");
+            });
+            document.getElementById("win-line").classList.remove("show");
+            document.getElementById("ttt-status").textContent = "Giliran kamu! Kamu ❌, ICEFOX ⭕";
+            updateTTT();
+        }
+
+        function updateTTT() {
+            document.getElementById("ttt-score").textContent = `KAMU: ${tttScore.me} | ICEFOX: ${tttScore.bot} | SERI: ${tttScore.draw}`;
+        }
+
+        let pongTimer = null, pong = null, pongTargetY = 230;
+
+        function drawPongIdle() {
+            const c = document.getElementById("pong");
+            const x = c.getContext("2d");
+            x.fillStyle = "#0b0f14"; x.fillRect(0, 0, 440, 280);
+            x.fillStyle = "#eef2f6"; x.font = "600 14px Inter, Arial"; x.textAlign = "center";
+            x.fillText("Tekan Mulai Pong untuk bermain", 220, 140);
+        }
+
+        function startPong() {
+            stopPong(); hideVictory("pong");
+            pong = { x: 220, y: 140, dx: 3.5, dy: 3, py: 230, ey: 110, ps: 0, es: 0 };
+            pongTargetY = 230;
+            const c = document.getElementById("pong");
+            const x = c.getContext("2d");
+            const move = (e) => {
+                const r = c.getBoundingClientRect();
+                let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                let y = (clientY - r.top) * (280 / r.height);
+                pongTargetY = Math.max(0, Math.min(240, y - 20));
+            };
+            c.onmousemove = move;
+            c.ontouchmove = (e) => { e.preventDefault(); move(e); };
+            c.ontouchstart = move;
+            pongTimer = setInterval(() => {
+                pong.py += (pongTargetY - pong.py) * 0.25;
+                let aiSpeed = 2.8;
+                if (pong.y > pong.ey + 18) pong.ey += aiSpeed;
+                if (pong.y < pong.ey + 18) pong.ey -= aiSpeed;
+                pong.ey = Math.max(0, Math.min(240, pong.ey));
+                pong.x += pong.dx; pong.y += pong.dy;
+                if (pong.y < 8 || pong.y > 272) pong.dy *= -1;
+                if (pong.x < 22 && pong.x > 10 && pong.y > pong.ey - 6 && pong.y < pong.ey + 46 && pong.dx < 0) {
+                    pong.dx = Math.abs(pong.dx) + 0.15;
+                    pong.dy = ((pong.y - (pong.ey + 20)) / 20) * 4.2;
+                    pong.x = 22;
+                }
+                if (pong.x > 418 && pong.x < 430 && pong.y > pong.py - 6 && pong.y < pong.py + 46 && pong.dx > 0) {
+                    pong.dx = -Math.abs(pong.dx) - 0.15;
+                    pong.dy = ((pong.y - (pong.py + 20)) / 20) * 4.2;
+                    pong.x = 418;
+                }
+                if (pong.x < -10) { pong.ps++; checkPongScore(); }
+                else if (pong.x > 450) { pong.es++; checkPongScore(); }
+                document.getElementById("pong-score").textContent = `KAMU ${pong.ps} : ${pong.es} ICEFOX`;
+                x.fillStyle = "#0b0f14"; x.fillRect(0, 0, 440, 280);
+                x.strokeStyle = "rgba(238,242,246,.25)"; x.setLineDash([8, 8]);
+                x.beginPath(); x.moveTo(220, 0); x.lineTo(220, 280); x.stroke(); x.setLineDash([]);
+                x.fillStyle = settings.color; x.fillRect(10, pong.ey, 8, 40); x.fillRect(422, pong.py, 8, 40);
+                x.fillStyle = "#fff"; x.beginPath(); x.arc(pong.x, pong.y, 7, 0, Math.PI * 2); x.fill();
+            }, 16);
+        }
+
+        function checkPongScore() {
+            if (pong.ps >= 5) {
+                showVictory("pong", `Kamu menang Pong 5-${pong.es}!`);
+                winCount++; renderLibrary(); stopPong(); return;
+            }
+            if (pong.es >= 5) {
+                document.getElementById("pong-score").textContent = `ICEFOX menang 5-${pong.ps}!`;
+                stopPong(); return;
+            }
+            pong.x = 220; pong.y = 140;
+            pong.dx = pong.ps > pong.es ? -3.5 : 3.5;
+            pong.dy = (Math.random() * 4 - 2);
+        }
+
+        function stopPong() {
+            if (pongTimer) clearInterval(pongTimer);
+            pongTimer = null;
+        }
+
+        /* =====================================================
+           DINO - KARAKTER JADI 👨‍🦽‍➡️
+        ===================================================== */
+
+        let dinoTimer = null;
+        let dino = {
+            y: 110, vy: 0, jumping: false, obs: 440, obs2: 680, score: 0,
+            high: parseInt(localStorage.getItem("dino_high") || "0"),
+            clouds: [{ x: 100, y: 20 }, { x: 300, y: 35 }],
+            victoryShown: false
+        };
+
+        const DINO_CHAR = "👨‍🦽‍➡️";
+
+        document.getElementById("dino-high").textContent = dino.high;
+
+        function drawDinoIdle() {
+            const c = document.getElementById("dino");
+            const x = c.getContext("2d");
+            x.fillStyle = "#0b0f14"; x.fillRect(0, 0, 440, 180);
+            x.font = "36px Arial"; x.textAlign = "center"; x.fillText(DINO_CHAR, 60, 140);
+            x.font = "14px Inter, Arial"; x.fillStyle = "#eef2f6";
+            x.fillText("Tekan Mulai Lompat!", 220, 90); x.fillText("🌵", 380, 140);
+        }
+
+        function startDino() {
+            stopDino(); hideVictory("dino"); hideVictory("gameover-dino");
+            dino.y = 110; dino.vy = 0; dino.obs = 440; dino.obs2 = 680; dino.score = 0; dino.victoryShown = false;
+            const c = document.getElementById("dino");
+            const x = c.getContext("2d");
+            dinoTimer = setInterval(() => {
+                if (dino.jumping) {
+                    dino.y += dino.vy; dino.vy += 1.1;
+                    if (dino.y >= 110) { dino.y = 110; dino.jumping = false; }
+                }
+                dino.obs -= 5.2; dino.obs2 -= 5.2;
+                if (dino.obs < -30) { dino.obs = 440 + Math.random() * 120; dino.score += 15; }
+                if (dino.obs2 < -30) { dino.obs2 = 440 + Math.random() * 200; dino.score += 15; }
+                dino.score += 0.35;
+                if (dino.score >= 500 && !dino.victoryShown) {
+                    dino.victoryShown = true; winCount++; renderLibrary();
+                    if (dino.score > dino.high) {
+                        dino.high = Math.floor(dino.score);
+                        localStorage.setItem("dino_high", dino.high);
+                        document.getElementById("dino-high").textContent = dino.high;
+                    }
+                    showVictory("dino", "Kamu sampai 500! Master Kursi Roda!");
+                    stopDino(); return;
+                }
+                if (((dino.obs > 28 && dino.obs < 62) || (dino.obs2 > 28 && dino.obs2 < 62)) && dino.y > 82) {
+                    if (dino.score > dino.high) {
+                        dino.high = Math.floor(dino.score);
+                        localStorage.setItem("dino_high", dino.high);
+                        document.getElementById("dino-high").textContent = dino.high;
+                    }
+                    document.getElementById("gameover-dino-text").textContent = "Menabrak kaktus! Skor: " + Math.floor(dino.score);
+                    document.getElementById("gameover-dino").classList.add("show");
+                    stopDino(); return;
+                }
+                document.getElementById("dino-score").innerHTML = `SCORE: ${Math.floor(dino.score)} • HIGH: ${dino.high}`;
+                x.fillStyle = "#0b0f14"; x.fillRect(0, 0, 440, 180);
+                x.font = "20px Arial";
+                dino.clouds.forEach(cl => {
+                    cl.x -= 1; if (cl.x < -20) cl.x = 440;
+                    x.fillText("☁️", cl.x, cl.y);
+                });
+                x.strokeStyle = "rgba(56,189,248,.35)"; x.setLineDash([10, 8]);
+                x.beginPath(); x.moveTo(0, 142); x.lineTo(440, 142); x.stroke(); x.setLineDash([]);
+                x.font = "38px Arial"; x.textAlign = "left";
+                x.fillText(DINO_CHAR, 28, dino.y + 32);
+                x.fillText("🌵", dino.obs, 142);
+                x.fillText("🌵", dino.obs2, 142);
+                x.fillStyle = "#8a97a8"; x.font = "11px Inter, Arial"; x.fillText("SKOR 500 = VICTORY", 300, 18);
+            }, 30);
+        }
+
+        function stopDino() {
+            if (dinoTimer) clearInterval(dinoTimer);
+            dinoTimer = null;
+        }
+
+        document.addEventListener("keydown", e => {
+            if (e.code === "Space" && document.getElementById("game-modal").classList.contains("show")) {
+                e.preventDefault();
+                if (!dino.jumping && dinoTimer) { dino.jumping = true; dino.vy = -13; }
+            }
+        });
+
+        document.getElementById("dino").addEventListener("click", () => {
+            if (!dino.jumping && dinoTimer) { dino.jumping = true; dino.vy = -13; }
+        });
+
+        let tebakNum = Math.floor(Math.random() * 100) + 1;
+        let tebakNyawa = 7;
+
+        function resetTebak() {
+            tebakNum = Math.floor(Math.random() * 100) + 1;
+            tebakNyawa = 7;
+            document.getElementById("tebak-status").textContent = "Saya sudah memikirkan angka baru! Sisa nyawa: 7";
+            document.getElementById("tebak-input").value = "";
+        }
+
+        function checkTebak() {
+            let v = parseInt(document.getElementById("tebak-input").value);
+            if (!v) return;
+            tebakNyawa--;
+            if (v === tebakNum) {
+                showVictory("tebak", "Benar! Angkanya " + tebakNum + "!");
+                winCount++; renderLibrary(); return;
+            }
+            if (tebakNyawa <= 0) {
+                document.getElementById("tebak-status").textContent = `Game Over! Angkanya ${tebakNum}.`;
+                return;
+            }
+            let clue = v < tebakNum ? "Terlalu kecil! Naikkan sedikit!" : "Terlalu besar! Turunkan sedikit!";
+            let panas = Math.abs(v - tebakNum) < 10 ? "Panas!" : Math.abs(v - tebakNum) < 25 ? "Lumayan hangat..." : "Dingin...";
+            document.getElementById("tebak-status").textContent = `${clue} ${panas} | Sisa nyawa: ${tebakNyawa}`;
+            document.getElementById("tebak-input").value = "";
+        }
+
+    </script>
+</body>
+</html>
